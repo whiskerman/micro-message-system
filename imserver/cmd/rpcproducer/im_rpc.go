@@ -6,16 +6,17 @@ im rpc服务 向kafka发送消息 相当于kafka的producer生产者rpc服务 �
 
 import (
 	"flag"
-	"github.com/micro/go-plugins/broker/kafka"
+	//"github.com/micro/go-plugins/broker/kafka"
 	"log"
 
-	"github.com/micro/cli"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/broker"
-	"github.com/micro/go-micro/config"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/transport/grpc"
-	"github.com/micro/go-plugins/registry/etcdv3"
+	"github.com/asim/go-micro/plugins/broker/kafka/v3"
+	etcdv3 "github.com/asim/go-micro/plugins/registry/etcd/v3"
+	"github.com/asim/go-micro/plugins/transport/grpc/v3"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/broker"
+	"github.com/asim/go-micro/v3/config"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/urfave/cli/v2"
 
 	imConfig "micro-message-system/imserver/cmd/config"
 	proto "micro-message-system/imserver/protos"
@@ -48,7 +49,7 @@ func main() {
 		micro.Registry(etcdRegisty),
 		micro.Version(conf.Version),
 		micro.Transport(grpc.NewTransport()),
-		micro.Flags(imFlag),
+		micro.Flags(&imFlag),
 	)
 	publisherServerMap := make(map[string]*util.KafkaBroker)
 	for _, item := range conf.ImServerList {

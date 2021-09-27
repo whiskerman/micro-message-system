@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"github.com/go-acme/lego/v3/log"
 	"time"
+
+	"github.com/go-acme/lego/v4/log"
 
 	"micro-message-system/common/baseerror"
 	"micro-message-system/common/config"
 	"micro-message-system/gateway/models"
-	"micro-message-system/imserver/protos"
+	im "micro-message-system/imserver/protos"
 	userProto "micro-message-system/userserver/protos"
 )
 
@@ -66,7 +67,7 @@ func NewGateWayLogic(userRpcModel userProto.UserService,
 
 func (l *GateWayLogic) Send(r *SendRequest) (*SendResponse, error) {
 	/*
-	1. 调用用户服务
+		1. 调用用户服务
 	*/
 	// 调用用户服务检查发送给的那个用户token是否存在
 	if _, err := l.userRpcModel.FindByToken(context.TODO(), &userProto.FindByTokenRequest{Token: r.ToToken}); err != nil {
@@ -92,7 +93,7 @@ func (l *GateWayLogic) Send(r *SendRequest) (*SendResponse, error) {
 	}
 	// 网关存在则调用imRpc服务发送消息
 	log.Println(req)
-	_, err = l.imRpcModel.PublishMessage(context.TODO(), req);
+	_, err = l.imRpcModel.PublishMessage(context.TODO(), req)
 	// 发送消息逻辑
 	if err != nil {
 		log.Printf("gateway网关调用IM RPC 发送消息到kafka：s%", err)

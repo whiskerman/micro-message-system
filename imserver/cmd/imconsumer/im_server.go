@@ -14,13 +14,13 @@ import (
 	"micro-message-system/imserver/logic"
 	"micro-message-system/imserver/util"
 
-	"github.com/micro/cli"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/broker"
-	"github.com/micro/go-micro/config"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-plugins/broker/kafka"
-	"github.com/micro/go-plugins/registry/etcdv3"
+	"github.com/asim/go-micro/plugins/broker/kafka/v3"
+	etcdv3 "github.com/asim/go-micro/plugins/registry/etcd/v3"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/broker"
+	"github.com/asim/go-micro/v3/config"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/urfave/cli/v2"
 
 	imConfig "micro-message-system/imserver/cmd/config"
 )
@@ -52,7 +52,7 @@ func main() {
 		micro.Name(conf.Server.Name),
 		micro.Registry(etcdRegisty),
 		micro.Version(conf.Version),
-		micro.Flags(imFlag),
+		micro.Flags(&imFlag),
 	)
 
 	log.Printf("has start listen topic %s", conf.Kafka.Topic)

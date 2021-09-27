@@ -11,25 +11,26 @@ gateway的作用：
 import (
 	"flag"
 	"fmt"
-	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
 	"io"
 	"log"
 	"micro-message-system/common/middleware"
 
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	"github.com/urfave/cli/v2"
+
+	etcdv3 "github.com/asim/go-micro/plugins/registry/etcd/v3"
+	"github.com/asim/go-micro/plugins/transport/grpc/v3"
+	"github.com/asim/go-micro/plugins/wrapper/breaker/hystrix/v3"
+	wrapperTrace "github.com/asim/go-micro/plugins/wrapper/trace/opentracing/v3"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/config"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/asim/go-micro/v3/web"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/micro/cli"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/config"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/transport/grpc"
-	"github.com/micro/go-micro/web"
-	"github.com/micro/go-plugins/registry/etcdv3"
-	"github.com/micro/go-plugins/wrapper/breaker/hystrix"
-	wrapperTrace "github.com/micro/go-plugins/wrapper/trace/opentracing"
 
 	gateWayConfig "micro-message-system/gateway/cmd/config"
 	"micro-message-system/gateway/controller"
@@ -85,7 +86,7 @@ func main() {
 	etcdRegisty := etcdv3.NewRegistry(
 		func(options *registry.Options) {
 			options.Addrs = conf.Etcd.Address
-		});
+		})
 
 	// Create a new service. Optionally include some options here.
 	rpcService := micro.NewService(
@@ -97,7 +98,7 @@ func main() {
 			wrapperTrace.NewClientWrapper(tracer),
 		), // 客户端熔断、链路追踪
 		micro.WrapHandler(wrapperTrace.NewHandlerWrapper(tracer)),
-		micro.Flags(userRpcFlag),
+		micro.Flags(&userRpcFlag),
 	)
 	rpcService.Init()
 
@@ -117,7 +118,7 @@ func main() {
 		web.Name(conf.Server.Name),
 		web.Registry(etcdRegisty),
 		web.Version(conf.Version),
-		web.Flags(userRpcFlag),
+		web.Flags(&userRpcFlag),
 		web.Address(conf.Port),
 	)
 	router := gin.Default()

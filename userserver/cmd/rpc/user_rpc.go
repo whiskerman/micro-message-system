@@ -3,27 +3,36 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go"
 	"io"
 	"log"
 
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	"github.com/urfave/cli/v2"
+
+	etcdv3 "github.com/asim/go-micro/plugins/registry/etcd/v3"
+	"github.com/asim/go-micro/plugins/transport/grpc/v3"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/config"
+	"github.com/asim/go-micro/v3/registry"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	rl "github.com/juju/ratelimit"
-	"github.com/micro/cli"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/config"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/transport/grpc"
-	"github.com/micro/go-plugins/registry/etcdv3"
-	"github.com/micro/go-plugins/wrapper/ratelimiter/ratelimit"
-	wrapperTrace "github.com/micro/go-plugins/wrapper/trace/opentracing"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
+
+	//"github.com/micro/cli"
+	//"github.com/micro/go-micro"
+	//"github.com/micro/go-micro/config"
+	//"github.com/micro/go-micro/registry"
+	//"github.com/micro/go-micro/transport/grpc"
+	//"github.com/micro/go-plugins/registry/etcdv3"
 	userRpcConfig "micro-message-system/userserver/cmd/config"
 	"micro-message-system/userserver/models"
 	userpb "micro-message-system/userserver/protos"
 	"micro-message-system/userserver/rpcserverimpl"
+
+	"github.com/asim/go-micro/plugins/wrapper/ratelimiter/ratelimit/v3"
+	wrapperTrace "github.com/asim/go-micro/plugins/wrapper/trace/opentracing/v3"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
 )
 
 func initJaeger(service string) (opentracing.Tracer, io.Closer) {
@@ -70,7 +79,7 @@ func main() {
 	etcdRegisty := etcdv3.NewRegistry(
 		func(options *registry.Options) {
 			options.Addrs = conf.Etcd.Address
-		});
+		})
 	b := rl.NewBucketWithRate(float64(conf.Server.RateLimit), int64(conf.Server.RateLimit))
 	service := micro.NewService(
 		micro.Name(conf.Server.Name),
@@ -81,7 +90,7 @@ func main() {
 			ratelimit.NewHandlerWrapper(b, false),
 			wrapperTrace.NewHandlerWrapper(tracer),
 		),
-		micro.Flags(userRpcFlag),
+		micro.Flags(&userRpcFlag),
 	)
 	service.Init()
 	userModel := models.NewMembersModel(engineUser)

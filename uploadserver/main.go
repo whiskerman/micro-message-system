@@ -3,16 +3,17 @@ package main
 import (
 	"flag"
 	"fmt"
+
 	rl "github.com/juju/ratelimit"
-	"github.com/micro/cli"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/config"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/transport/grpc"
-	"github.com/micro/go-micro/web"
-	"github.com/micro/go-plugins/registry/etcdv3"
-	_ "github.com/micro/go-plugins/registry/kubernetes"
-	"github.com/micro/go-plugins/wrapper/ratelimiter/ratelimit"
+	"github.com/urfave/cli/v2"
+
+	etcdv3 "github.com/asim/go-micro/plugins/registry/etcd/v3"
+	"github.com/asim/go-micro/plugins/transport/grpc/v3"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/config"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/asim/go-micro/v3/web"
+
 	"log"
 	cfg "micro-message-system/common/config"
 	uploadRpcConfig "micro-message-system/uploadserver/config"
@@ -20,6 +21,9 @@ import (
 	"micro-message-system/uploadserver/route"
 	upRpc "micro-message-system/uploadserver/rpcserverimpl"
 	"os"
+
+	_ "github.com/asim/go-micro/plugins/registry/kubernetes/v3"
+	"github.com/asim/go-micro/plugins/wrapper/ratelimiter/ratelimit/v3"
 )
 
 func startRPCService() {
@@ -30,6 +34,7 @@ func startRPCService() {
 	}
 	configFile := flag.String(uploadRpcFlag.Name, uploadRpcFlag.Value, uploadRpcFlag.Usage)
 	flag.Parse()
+
 	conf := new(uploadRpcConfig.RpcConfig)
 
 	if err := config.LoadFile(*configFile); err != nil {
@@ -41,7 +46,7 @@ func startRPCService() {
 	etcdRegisty := etcdv3.NewRegistry(
 		func(options *registry.Options) {
 			options.Addrs = conf.Etcd.Address
-		});
+		})
 	b := rl.NewBucketWithRate(float64(conf.Server.RateLimit), int64(conf.Server.RateLimit))
 	service := micro.NewService(
 		micro.Name(conf.Server.Name),
@@ -49,7 +54,7 @@ func startRPCService() {
 		micro.Version(conf.Version),
 		micro.Transport(grpc.NewTransport()),
 		micro.WrapHandler(ratelimit.NewHandlerWrapper(b, false)),
-		micro.Flags(uploadRpcFlag),
+		micro.Flags(&uploadRpcFlag),
 	)
 	service.Init()
 
@@ -78,12 +83,12 @@ func startAPIService() {
 	etcdRegisty := etcdv3.NewRegistry(
 		func(options *registry.Options) {
 			options.Addrs = conf.Etcd.Address
-		});
+		})
 	router := route.Router()
 	service := web.NewService(
 		web.Registry(etcdRegisty),
 		web.Version(conf.Version),
-		web.Flags(uploadApiFlag),
+		web.Flags(&uploadApiFlag),
 		web.Address(conf.Port),
 	)
 	service.Handle("/", router)

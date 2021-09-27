@@ -7,7 +7,7 @@ kafka broker 发送/订阅消息
 import (
 	"log"
 
-	"github.com/micro/go-micro/broker"
+	"github.com/asim/go-micro/v3/broker"
 )
 
 type (

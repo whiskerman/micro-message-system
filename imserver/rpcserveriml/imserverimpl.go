@@ -9,10 +9,10 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/micro/go-micro/broker"
+	"github.com/asim/go-micro/v3/broker"
 
 	"micro-message-system/common/baseerror"
-	"micro-message-system/imserver/protos"
+	im "micro-message-system/imserver/protos"
 	"micro-message-system/imserver/util"
 )
 
