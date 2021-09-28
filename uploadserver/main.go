@@ -66,7 +66,7 @@ func startRPCService() {
 
 func startAPIService() {
 	uploadApiFlag := cli.StringFlag{
-		Name:  "f1",
+		Name:  "f",
 		Value: "./config/config_api.json",
 		Usage: "please use xxx -f config_api.json",
 	}
