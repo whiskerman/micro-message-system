@@ -1,5 +1,9 @@
 version: "3.4"
 
+networks:
+  nats-net:
+    external: true
+
 x-volumes:
   &project-home-dir
     .:/src
@@ -12,20 +16,28 @@ services:
   userserver:
     image: micro_userserver:latest
     restart: always
+    networks:
+      - nats-net
 
   imserver:
     image: micro_imserver:latest
     restart: always
-
+    networks:
+      - nats-net
+  
   websocket:
     image: micro_websocket:latest
     restart: always
+    networks:
+      - nats-net 
 
   uploadserver:
     image: micro_uploadserver:latest
     ports:
       - "8086:8086"
     restart: always
+    networks:
+      - nats-net
 
   web:
     image: micro_gateway:latest
@@ -36,3 +48,5 @@ services:
     depends_on:
       - userserver
       - imserver
+    networks:
+      - nats-net

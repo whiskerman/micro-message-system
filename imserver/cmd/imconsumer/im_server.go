@@ -57,7 +57,7 @@ func main() {
 
 	log.Printf("has start listen topic %s", conf.Kafka.Topic)
 	kafkaBroker, err := util.NewKafkaBroker(conf.Kafka.Topic, kafkaRegistry)
-	log.Printf("kafkaBroker:%s", kafkaBroker)
+	log.Printf("kafkaBroker:%v\n", kafkaBroker)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func main() {
 		func(im *logic.ImServer) {
 			im.Address = conf.Port
 		})
-	log.Printf("imServer:s%", imServer)
+	log.Printf("imServer:%v\n", imServer)
 	if err != nil {
 		log.Fatal(err)
 	}

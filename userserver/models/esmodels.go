@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/olivere/elastic"
 	"reflect"
 	"time"
+
+	"github.com/olivere/elastic"
 )
 
 type MemberSE struct {
@@ -67,7 +68,7 @@ func SearchUserBuildOne(ctx context.Context, item *Members, client *elastic.Clie
 // 删除一条ES中的数据
 func SearchUserRemoveOne(id int64) {
 	fmt.Printf("SearchUserRemoveOne: %d", id)
-	client, err := elastic.NewSimpleClient(elastic.SetURL("http://192.168.33.17:9200/"))
+	client, err := elastic.NewSimpleClient(elastic.SetURL("http://10.10.30.244:9200/"))
 	if err != nil {
 		// Handle error
 		fmt.Println(err.Error())
@@ -107,7 +108,7 @@ func DumpQuery(src interface{}, err error) {
 func UserSearch(query string) []*Members {
 	fmt.Printf("UserSearch: %s\n", query)
 	var err error
-	client, err := elastic.NewSimpleClient(elastic.SetURL("http://192.168.33.16:9200/"))
+	client, err := elastic.NewSimpleClient(elastic.SetURL("http://10.10.30.244:9200/"))
 	if err != nil {
 		// Handle error
 		fmt.Println(err.Error())

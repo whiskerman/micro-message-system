@@ -10,7 +10,7 @@ import (
 
 var (
 	pool      *redis.Pool
-	redisHost = "192.168.33.16:6379"
+	redisHost = "10.10.30.244:6379"
 )
 
 // newRedisPool : 创建redis连接池

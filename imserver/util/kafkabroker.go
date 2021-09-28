@@ -24,7 +24,7 @@ func NewKafkaBroker(topic string, kafkaBroker broker.Broker) (*KafkaBroker, erro
 		return nil, err
 	}
 	if err := kafkaBroker.Connect(); err != nil {
-		log.Printf("kafka连接失败：s%", err)
+		log.Printf("kafka连接失败：%v broker: %v", err, kafkaBroker)
 		return nil, err
 	}
 	return &KafkaBroker{topic: topic, kafkaBroker: kafkaBroker}, nil
@@ -50,6 +50,6 @@ func (p *KafkaBroker) Subscribe(handlerFunc func(msg []byte) error) {
 	if err != nil {
 		log.Printf("[Subscribe %s err] : %+v", p.topic, err)
 	}
-	log.Printf("sub:s%", sub)
+	log.Printf("sub:%v", sub)
 	log.Printf("[publisher err]")
 }

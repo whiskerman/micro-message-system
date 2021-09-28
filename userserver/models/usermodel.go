@@ -29,7 +29,7 @@ func NewMembersModel(mysql *gorm.DB) *MembersModel {
 }
 
 func GetDb() (db *gorm.DB, err error) {
-	db, err = gorm.Open("mysql", "root:123456@tcp(192.168.33.16:3306)/members?charset=utf8&parseTime=True&loc=Local")
+	db, err = gorm.Open("mysql", "root:Peng?345?@tcp(10.10.30.244:3306)/members?charset=utf8&parseTime=True&loc=Local")
 	return db, nil
 }
 

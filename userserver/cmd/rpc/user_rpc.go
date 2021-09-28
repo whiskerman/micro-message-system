@@ -44,7 +44,7 @@ func initJaeger(service string) (opentracing.Tracer, io.Closer) {
 		Reporter: &jaegercfg.ReporterConfig{
 			LogSpans: true,
 			// 注意：填下地址不能加http:
-			LocalAgentHostPort: "192.168.33.16:6831",
+			LocalAgentHostPort: "10.10.30.244:6831",
 		},
 	}
 	tracer, closer, err := cfg.New(service, jaegercfg.Logger(jaeger.StdLogger))

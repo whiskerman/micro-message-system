@@ -12,7 +12,7 @@ func UserGetAll() {
 	list, err := models.QueryUserWithCon()
 	if err == nil {
 		ctx := context.Background()
-		client, err := elastic.NewSimpleClient(elastic.SetURL("http://192.168.33.16:9200/"))
+		client, err := elastic.NewSimpleClient(elastic.SetURL("http://10.10.30.244:9200/"))
 		if err != nil {
 			// Handle error
 			fmt.Println(err.Error())
